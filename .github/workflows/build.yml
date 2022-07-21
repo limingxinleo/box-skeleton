@@ -11,7 +11,7 @@ jobs:
       - name: Build
         run: |
           docker build -t box-skeleton .
-          docker run --name box box-skeleton
+          docker run --entrypoint /bin/sh --name box box-skeleton
           docker cp box:/opt/www/box.macos.arm64 .
           docker cp box:/opt/www/box.macos.x86_64 .
           docker cp box:/opt/www/box.linux.x86_64 .
