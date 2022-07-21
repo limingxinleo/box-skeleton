@@ -13,6 +13,7 @@ LABEL maintainer="Hyperf Developers <group@hyperf.io>" version="1.0" license="MI
 ##
 # --build-arg timezone=Asia/Shanghai
 ARG timezone
+ARG token
 
 ENV TIMEZONE=${timezone:-"Asia/Shanghai"} \
     APP_ENV=prod \
@@ -20,6 +21,10 @@ ENV TIMEZONE=${timezone:-"Asia/Shanghai"} \
 
 # update
 RUN set -ex \
+    # Install Micro
+    && wget https://alpine-apk-repository.knowyourself.cc/micro/v0.0.1/micro.8.0.arm64.sfx \
+    && wget https://alpine-apk-repository.knowyourself.cc/micro/v0.0.1/micro.8.0.x86_64.sfx \
+    && wget https://alpine-apk-repository.knowyourself.cc/micro/v0.0.1/micro.8.0.linux.x86_64.sfx \
     # show php version and extensions
     && php -v \
     && php -m \
@@ -32,6 +37,7 @@ RUN set -ex \
         echo "post_max_size=128M"; \
         echo "memory_limit=1G"; \
         echo "date.timezone=${TIMEZONE}"; \
+        echo "phar.readonly=Off"; \
     } | tee conf.d/99_overrides.ini \
     # - config timezone
     && ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
@@ -47,8 +53,7 @@ WORKDIR /opt/www
 # RUN composer install --no-dev --no-scripts
 
 COPY . /opt/www
-RUN composer install --no-dev -o && php bin/hyperf.php
-
-EXPOSE 9764
-
-ENTRYPOINT ["php", "/opt/www/bin/hyperf.php", "start"]
+RUN composer install --no-dev -o && php bin/hyperf.php && php bin/hyperf.php phar:build --name box.phar
+RUN cat /micro.8.0.arm64.sfx box.phar > box.macos.arm64
+RUN cat /micro.8.0.x86_64.sfx box.phar > box.macos.x86_64
+RUN cat /micro.8.0.linux.x86_64.sfx box.phar > box.linux.x86_64
