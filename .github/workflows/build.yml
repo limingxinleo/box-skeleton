@@ -14,8 +14,3 @@ jobs:
           docker run --entrypoint /bin/sh --name box box-skeleton
           docker cp box:/opt/www/box.macos.arm64 .
           docker cp box:/opt/www/box.macos.x86_64 .
-          docker cp box:/opt/www/box.linux.x86_64 .
-      - name: Run
-        run: |
-          chmod u+x box.linux.x86_64
-          ./box.linux.x86_64
