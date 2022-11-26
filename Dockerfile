@@ -21,9 +21,8 @@ ENV TIMEZONE=${timezone:-"Asia/Shanghai"} \
 # update
 RUN set -ex \
     # Install Micro
-    && wget https://alpine-apk-repository.knowyourself.cc/micro/v0.0.1/micro.8.0.arm64.sfx \
-    && wget https://alpine-apk-repository.knowyourself.cc/micro/v0.0.1/micro.8.0.x86_64.sfx \
-    && wget https://alpine-apk-repository.knowyourself.cc/micro/v0.0.1/micro.8.0.linux.x86_64.sfx \
+    && wget https://alpine-apk-repository.knowyourself.cc/micro/v0.1.0/micro.8.1.arm64.sfx \
+    && wget https://alpine-apk-repository.knowyourself.cc/micro/v0.1.0/micro.8.1.x86_64.sfx \
     # show php version and extensions
     && php -v \
     && php -m \
@@ -53,10 +52,7 @@ WORKDIR /opt/www
 
 COPY . /opt/www
 RUN composer install --no-dev -o && php bin/hyperf.php && php bin/hyperf.php phar:build --name box.phar \
-    && cat /micro.8.0.arm64.sfx box.phar > box.macos.arm64 && chmod u+x box.macos.arm64 \
-    && cat /micro.8.0.x86_64.sfx box.phar > box.macos.x86_64 && chmod u+x box.macos.x86_64 \
-    && cat /micro.8.0.linux.x86_64.sfx box.phar > box.linux.x86_64 && chmod u+x box.linux.x86_64
+    && cat /micro.8.1.arm64.sfx box.phar > box.macos.arm64 && chmod u+x box.macos.arm64 \
+    && cat /micro.8.1.x86_64.sfx box.phar > box.macos.x86_64 && chmod u+x box.macos.x86_64
 
 EXPOSE 9764
-
-ENTRYPOINT ["/opt/www/box.linux.x86_64", "start"]
